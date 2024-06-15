@@ -1,13 +1,13 @@
-import { StyleSheet, Text, View } from "react-native";
+import { View } from "react-native";
+
+import AnimatedIntro from "@/components/AnimatedIntro";
 
 const Page = () => {
   return (
-    <View>
-      <Text>Page</Text>
+    <View style={{ flex: 1 }}>
+      <AnimatedIntro />
     </View>
   );
 };
 
 export default Page;
-
-const styles = StyleSheet.create({});
