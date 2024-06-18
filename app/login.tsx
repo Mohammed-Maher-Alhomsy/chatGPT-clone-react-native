@@ -3,14 +3,19 @@ import {
   Text,
   View,
   Image,
-  Platform,
+  Alert,
   TextInput,
   StyleSheet,
+  ScrollView,
   TouchableOpacity,
   ActivityIndicator,
   KeyboardAvoidingView,
 } from "react-native";
-
+import {
+  useSignIn,
+  useSignUp,
+  isClerkAPIResponseError,
+} from "@clerk/clerk-expo";
 import { useLocalSearchParams } from "expo-router";
 
 import Colors from "@/constants/Colors";
@@ -21,66 +26,121 @@ const Page = () => {
 
   const [loading, setLoading] = useState(false);
   const [password, setPassword] = useState("");
-  const [emailAddress, setEmailAddress] = useState("maher@gmail.com");
+  const [emailAddress, setEmailAddress] = useState("");
 
-  const onSignUpPress = async () => {};
-  const onSignInPress = async () => {};
+  const {
+    signUp,
+    isLoaded: signUpLoaded,
+    setActive: signupSetActive,
+  } = useSignUp();
+
+  const { signIn, isLoaded, setActive } = useSignIn();
+
+  const onSignUpPress = async () => {
+    if (!signUpLoaded) return;
+
+    setLoading(true);
+
+    try {
+      const result = await signUp.create({ emailAddress, password });
+
+      console.log("Sign Up Result : ", result);
+
+      signupSetActive({
+        session: result.createdSessionId,
+      });
+    } catch (error) {
+      console.log("Sign Up Error : ", error);
+
+      if (isClerkAPIResponseError(error)) {
+        Alert.alert(error.errors[0].message);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onSignInPress = async () => {
+    if (!isLoaded) return;
+
+    setLoading(true);
+
+    try {
+      const result = await signIn.create({
+        identifier: emailAddress,
+        password,
+      });
+
+      console.log("Sign In Result : ", result);
+
+      setActive({
+        session: result.createdSessionId,
+      });
+    } catch (error) {
+      console.log("Sign Up Error : ", error);
+
+      if (isClerkAPIResponseError(error)) {
+        Alert.alert(error.errors[0].message);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      keyboardVerticalOffset={70}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
-      {loading && (
-        <View style={defaultStyles.loadingOverlay}>
-          <ActivityIndicator size="large" color="#000" />
+    <KeyboardAvoidingView style={styles.container}>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {loading && (
+          <View style={defaultStyles.loadingOverlay}>
+            <ActivityIndicator size="large" color="#000" />
+          </View>
+        )}
+
+        <Image
+          style={styles.logo}
+          source={require("../assets/images/logo-dark.png")}
+        />
+
+        <Text style={styles.title}>
+          {type === "login" ? "Welcome back" : "Create your account"}
+        </Text>
+
+        <View style={{ marginBottom: 30 }}>
+          <TextInput
+            style={styles.inputField}
+            autoCapitalize="none"
+            keyboardType="email-address"
+            placeholder="Email"
+            value={emailAddress}
+            onChangeText={setEmailAddress}
+          />
+
+          <TextInput
+            value={password}
+            secureTextEntry
+            autoCapitalize="none"
+            placeholder="Password"
+            style={styles.inputField}
+            onChangeText={setPassword}
+          />
         </View>
-      )}
 
-      <Image
-        style={styles.logo}
-        source={require("../assets/images/logo-dark.png")}
-      />
-
-      <Text style={styles.title}>
-        {type === "login" ? "Welcome back" : "Create your account"}
-      </Text>
-
-      <View style={{ marginBottom: 30 }}>
-        <TextInput
-          style={styles.inputField}
-          autoCapitalize="none"
-          placeholder="Email"
-          value={emailAddress}
-          onChangeText={setEmailAddress}
-        />
-
-        <TextInput
-          style={styles.inputField}
-          autoCapitalize="none"
-          placeholder="Password"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
-      </View>
-
-      {type === "login" ? (
-        <TouchableOpacity
-          onPress={onSignInPress}
-          style={[defaultStyles.btn, styles.btnPrimary]}
-        >
-          <Text style={styles.btnPrimaryText}>Log in</Text>
-        </TouchableOpacity>
-      ) : (
-        <TouchableOpacity
-          onPress={onSignUpPress}
-          style={[defaultStyles.btn, styles.btnPrimary]}
-        >
-          <Text style={styles.btnPrimaryText}>Create account</Text>
-        </TouchableOpacity>
-      )}
+        {type === "login" ? (
+          <TouchableOpacity
+            onPress={onSignInPress}
+            style={[defaultStyles.btn, styles.btnPrimary]}
+          >
+            <Text style={styles.btnPrimaryText}>Log in</Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            onPress={onSignUpPress}
+            style={[defaultStyles.btn, styles.btnPrimary]}
+          >
+            <Text style={styles.btnPrimaryText}>Create account</Text>
+          </TouchableOpacity>
+        )}
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 };

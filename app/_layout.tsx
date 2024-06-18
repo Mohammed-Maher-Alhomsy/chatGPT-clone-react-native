@@ -3,10 +3,10 @@ import { TouchableOpacity } from "react-native";
 
 import { useFonts } from "expo-font";
 import { Ionicons } from "@expo/vector-icons";
-import { Stack, useRouter, useSegments } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import * as SplashScreen from "expo-splash-screen";
 import { ClerkProvider, useAuth } from "@clerk/clerk-expo";
+import { Stack, useRouter, useSegments } from "expo-router";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -30,7 +30,6 @@ const tokenCache = {
 const InitialLayout = () => {
   const router = useRouter();
   const segments = useSegments();
-
   const { isLoaded, isSignedIn } = useAuth();
 
   const [loaded, error] = useFonts({
@@ -51,8 +50,19 @@ const InitialLayout = () => {
 
   useEffect(() => {
     if (!isLoaded) return;
-    const segment = segments[0];
-    console.log(segment);
+
+    const inAuthGroup = segments[0] === "(auth)";
+
+    console.log("inAuthGroup", inAuthGroup);
+    console.log("isSignedIn", isSignedIn);
+
+    if (isSignedIn && !inAuthGroup) {
+      // Bring the user inside
+      router.replace("/(auth)/");
+    } else if (!isSignedIn && inAuthGroup) {
+      // Kick the user out
+      router.replace("/");
+    }
   }, [isSignedIn]);
 
   if (!loaded || !isLoaded) {
@@ -74,6 +84,7 @@ const InitialLayout = () => {
           ),
         }}
       />
+      <Stack.Screen name="(auth)" options={{ headerShown: false }} />
     </Stack>
   );
 };
