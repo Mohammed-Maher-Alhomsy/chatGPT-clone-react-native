@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { TouchableOpacity } from "react-native";
+import { ActivityIndicator, TouchableOpacity, View } from "react-native";
 
 import { useFonts } from "expo-font";
 import { Ionicons } from "@expo/vector-icons";
@@ -66,11 +66,15 @@ const InitialLayout = () => {
   }, [isSignedIn]);
 
   if (!loaded || !isLoaded) {
-    return <></>;
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
   }
 
   return (
-    <Stack>
+    <Stack screenOptions={{ statusBarColor: "#222" }}>
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen
         name="login"

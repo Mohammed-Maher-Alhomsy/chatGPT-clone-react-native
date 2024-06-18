@@ -2,8 +2,11 @@ import { Stack } from "expo-router";
 
 const Layout = () => {
   return (
-    <Stack>
-      <Stack.Screen name="index" options={{ headerShown: false }} />
+    <Stack screenOptions={{ headerBackVisible: false }}>
+      <Stack.Screen
+        name="(drawer)"
+        options={{ headerShown: false, statusBarColor: "#222" }}
+      />
     </Stack>
   );
 };
