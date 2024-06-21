@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
 
 import { Stack } from "expo-router";
 
@@ -10,21 +10,22 @@ const Page = () => {
     <View style={defaultStyles.pageContainer}>
       <Stack.Screen
         options={{
-          headerTitle: () => (
-            <HeaderDropDown
-              title="Dall.E"
-              onSelect={(key) => {}}
-              items={[
-                {
-                  key: "share",
-                  title: "Share GPT",
-                  icon: "square.and.arrow.up",
-                },
-                { key: "details", title: "See Details", icon: "info.circle" },
-                { key: "keep", title: "Keep in Sidebar", icon: "pin" },
-              ]}
-            />
-          ),
+          headerTitle: () =>
+            Platform.OS === "android" ? (
+              <HeaderDropDown
+                title="Dall.E"
+                onSelect={(key) => {}}
+                items={[
+                  {
+                    key: "share",
+                    title: "Share GPT",
+                    icon: "square.and.arrow.up",
+                  },
+                  { key: "details", title: "See Details", icon: "info.circle" },
+                  { key: "keep", title: "Keep in Sidebar", icon: "pin" },
+                ]}
+              />
+            ) : undefined,
         }}
       />
     </View>

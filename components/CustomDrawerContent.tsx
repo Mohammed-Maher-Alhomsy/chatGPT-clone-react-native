@@ -21,7 +21,13 @@ const CustomDrawerContent = (props: any) => {
   const { top, bottom } = useSafeAreaInsets();
 
   return (
-    <View style={{ flex: 1, marginLeft: top, marginTop: 7 }}>
+    <View
+      style={{
+        flex: 1,
+        marginLeft: 7,
+        marginTop: top + 5,
+      }}
+    >
       <View style={{ paddingBottom: 16 }}>
         <View style={styles.searchSection}>
           <Ionicons style={styles.searchIcon} name="search" />
