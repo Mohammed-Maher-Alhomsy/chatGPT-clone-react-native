@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import {
   useSignIn,
@@ -88,7 +89,11 @@ const Page = () => {
   };
 
   return (
-    <KeyboardAvoidingView style={styles.container}>
+    <KeyboardAvoidingView
+      behavior="padding"
+      keyboardVerticalOffset={Platform.OS === "ios" ? 150 : 0}
+      style={styles.container}
+    >
       <ScrollView showsVerticalScrollIndicator={false}>
         {loading && (
           <View style={defaultStyles.loadingOverlay}>
