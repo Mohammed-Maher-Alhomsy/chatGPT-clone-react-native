@@ -1,18 +1,40 @@
-import { Button, SafeAreaView, StyleSheet, Text } from "react-native";
+import { useState } from "react";
+import { Button, StyleSheet, View } from "react-native";
 
+import { Stack } from "expo-router";
 import { useAuth } from "@clerk/clerk-expo";
+
+import { defaultStyles } from "@/constants/Styles";
+import HeaderDropDown from "@/components/HeaderDropDown";
 
 const Page = () => {
   const { signOut } = useAuth();
+  const [gptVersion, setGptVersion] = useState("3.5");
 
   return (
-    <SafeAreaView style={{ padding: 30 }}>
-      <Text>Page</Text>
+    <View style={defaultStyles.pageContainer}>
+      <Stack.Screen
+        options={{
+          headerTitle: () => (
+            <HeaderDropDown
+              title="ChatGPT"
+              onSelect={(key) => setGptVersion(key)}
+              selected={gptVersion}
+              items={[
+                { key: "3.5", title: "GPT-3.5", icon: "bolt" },
+                { key: "4", title: "GPT-4", icon: "sparkles" },
+              ]}
+            />
+          ),
+        }}
+      />
       <Button title="Sign out" onPress={() => signOut()} />
-    </SafeAreaView>
+    </View>
   );
 };
 
 export default Page;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  item: {},
+});
