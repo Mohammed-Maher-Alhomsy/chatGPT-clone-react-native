@@ -3,10 +3,10 @@ import { StyleSheet, TouchableOpacity, View, TextInput } from "react-native";
 
 import Animated, {
   withTiming,
-  useSharedValue,
-  useAnimatedStyle,
   interpolate,
   Extrapolation,
+  useSharedValue,
+  useAnimatedStyle,
 } from "react-native-reanimated";
 import * as ImagePicker from "expo-image-picker";
 import * as DocumentPicker from "expo-document-picker";
@@ -22,10 +22,9 @@ type Props = {
 const ATouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
 
 const MessageInput = ({ onSouldSendMessage }: Props) => {
+  const expanded = useSharedValue(0);
   const { bottom } = useSafeAreaInsets();
   const [message, setMessage] = useState("");
-
-  const expanded = useSharedValue(0);
 
   const expandItem = () => {
     expanded.value = withTiming(1, { duration: 400 });

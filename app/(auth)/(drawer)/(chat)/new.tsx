@@ -12,13 +12,16 @@ import {
 import { Stack } from "expo-router";
 import { useAuth } from "@clerk/clerk-expo";
 
+import { Message } from "@/utils/interfaces";
 import { defaultStyles } from "@/constants/Styles";
 import MessageInput from "@/components/MessageInput";
+import MessageIdeas from "@/components/MessageIdeas";
 import HeaderDropDown from "@/components/HeaderDropDown";
 
 const Page = () => {
   const { signOut } = useAuth();
   const [gptVersion, setGptVersion] = useState("3.5");
+  const [messages, setMessages] = useState<Message[]>([]);
 
   const getCompletion = (message: string) => {
     console.log(message);
@@ -44,7 +47,6 @@ const Page = () => {
       />
 
       <ScrollView style={{ flex: 1 }}>
-        <Text>DUMMY CONTENT</Text>
         <Button title="Sign out" onPress={() => signOut()} />
       </ScrollView>
 
@@ -52,6 +54,7 @@ const Page = () => {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={Platform.OS === "ios" ? 70 : 0}
       >
+        {messages.length === 0 && <MessageIdeas onSelectCard={getCompletion} />}
         <MessageInput onSouldSendMessage={getCompletion} />
       </KeyboardAvoidingView>
     </View>
