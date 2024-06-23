@@ -7,9 +7,11 @@ import {
   KeyboardAvoidingView,
 } from "react-native";
 
-import { Stack } from "expo-router";
+import { Redirect, Stack } from "expo-router";
 import { FlashList } from "@shopify/flash-list";
+import { useMMKVString } from "react-native-mmkv";
 
+import { storage } from "@/utils/Storage";
 import { Message, Role } from "@/utils/interfaces";
 import { defaultStyles } from "@/constants/Styles";
 import ChatMessage from "@/components/ChatMessage";
@@ -120,8 +122,14 @@ const DUMMY_MESSAGES: Message[] = [
 ];
 
 const Page = () => {
-  const [gptVersion, setGptVersion] = useState("3.5");
+  const [key, setKey] = useMMKVString("apiKey", storage);
   const [messages, setMessages] = useState<Message[]>(DUMMY_MESSAGES);
+  const [organization, setOrganization] = useMMKVString("org", storage);
+  const [gptVersion, setGptVersion] = useMMKVString("gptVersion", storage);
+
+  if (!key || !organization || key === "" || organization === "") {
+    return <Redirect href="/(auth)/(modal)/settings" />;
+  }
 
   const getCompletion = (message: string) => {
     console.log(message);
