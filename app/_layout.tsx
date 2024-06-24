@@ -58,7 +58,7 @@ const InitialLayout = () => {
 
     if (isSignedIn && !inAuthGroup) {
       // Bring the user inside
-      router.replace("/(auth)/(drawer)/(chat)/new");
+      router.replace("/(auth)/(drawer)/explore");
     } else if (!isSignedIn && inAuthGroup) {
       // Kick the user out
       router.replace("/");

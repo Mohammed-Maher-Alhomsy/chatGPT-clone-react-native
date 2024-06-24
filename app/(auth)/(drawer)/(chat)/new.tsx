@@ -1,12 +1,14 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   View,
   Image,
   Platform,
   StyleSheet,
   KeyboardAvoidingView,
+  Alert,
 } from "react-native";
 
+import OpenAI from "react-native-openai";
 import { Redirect, Stack } from "expo-router";
 import { FlashList } from "@shopify/flash-list";
 import { useMMKVString } from "react-native-mmkv";
@@ -29,96 +31,6 @@ const DUMMY_MESSAGES: Message[] = [
     content:
       "I need help with my React Native app. I need help with my React Native app. I need help with my React Native app. I need help with my React Native app. I need help with my React Native app. I need help with my React Native app.",
   },
-  {
-    role: Role.Bot,
-    content: "HEllo, how can I help you today?",
-  },
-  {
-    role: Role.User,
-    content:
-      "I need help with my React Native app. I need help with my React Native app. I need help with my React Native app. I need help with my React Native app. I need help with my React Native app. I need help with my React Native app.",
-  },
-  {
-    role: Role.Bot,
-    content: "HEllo, how can I help you today?",
-  },
-  {
-    role: Role.User,
-    content:
-      "I need help with my React Native app. I need help with my React Native app. I need help with my React Native app. I need help with my React Native app. I need help with my React Native app. I need help with my React Native app.",
-  },
-  {
-    role: Role.Bot,
-    content: "HEllo, how can I help you today?",
-  },
-  {
-    role: Role.User,
-    content:
-      "I need help with my React Native app. I need help with my React Native app. I need help with my React Native app. I need help with my React Native app. I need help with my React Native app. I need help with my React Native app.",
-  },
-  {
-    role: Role.Bot,
-    content: "HEllo, how can I help you today?",
-  },
-  {
-    role: Role.User,
-    content:
-      "I need help with my React Native app. I need help with my React Native app. I need help with my React Native app. I need help with my React Native app. I need help with my React Native app. I need help with my React Native app.",
-  },
-  {
-    role: Role.Bot,
-    content: "HEllo, how can I help you today?",
-  },
-  {
-    role: Role.User,
-    content:
-      "I need help with my React Native app. I need help with my React Native app. I need help with my React Native app. I need help with my React Native app. I need help with my React Native app. I need help with my React Native app.",
-  },
-  {
-    role: Role.Bot,
-    content: "HEllo, how can I help you today?",
-  },
-  {
-    role: Role.User,
-    content:
-      "I need help with my React Native app. I need help with my React Native app. I need help with my React Native app. I need help with my React Native app. I need help with my React Native app. I need help with my React Native app.",
-  },
-  {
-    role: Role.Bot,
-    content: "HEllo, how can I help you today?",
-  },
-  {
-    role: Role.User,
-    content:
-      "I need help with my React Native app. I need help with my React Native app. I need help with my React Native app. I need help with my React Native app. I need help with my React Native app. I need help with my React Native app.",
-  },
-  {
-    role: Role.Bot,
-    content: "HEllo, how can I help you today?",
-  },
-  {
-    role: Role.User,
-    content:
-      "I need help with my React Native app. I need help with my React Native app. I need help with my React Native app. I need help with my React Native app. I need help with my React Native app. I need help with my React Native app.",
-  },
-  {
-    role: Role.Bot,
-    content: "HEllo, how can I help you today?",
-  },
-  {
-    role: Role.User,
-    content:
-      "I need help with my React Native app. I need help with my React Native app. I need help with my React Native app. I need help with my React Native app. I need help with my React Native app. I need help with my React Native app.",
-  },
-  {
-    role: Role.Bot,
-    content: "HEllo, how can I help you today?",
-  },
-  {
-    role: Role.User,
-    content:
-      "I need help with my React Native app. I need help with my React Native app. I need help with my React Native app. I need help with my React Native app. I need help with my React Native app. I need help with my React Native app.",
-  },
 ];
 
 const Page = () => {
@@ -131,9 +43,36 @@ const Page = () => {
     return <Redirect href="/(auth)/(modal)/settings" />;
   }
 
-  const getCompletion = (message: string) => {
+  const openAI = useMemo(() => new OpenAI({ apiKey: key, organization }), []);
+
+  const getCompletion = async (message: string) => {
     console.log(message);
+
+    if (messages.length === 0) {
+      //  Create Chat later, store to DB
+    }
+
+    setMessages((prev) => [
+      ...prev,
+      { role: Role.User, content: message },
+      { role: Role.Bot, content: "" },
+    ]);
+
+    try {
+    } catch (error) {
+      Alert.alert("error in opean ai");
+    }
   };
+
+  useEffect(() => {
+    const handleMessage = (payload: any) => {
+      console.log(payload);
+    };
+
+    openAI.chat.addListener("onChatMessageReceived", handleMessage);
+
+    return () => openAI.chat.removeListener("onChatMessageReceived");
+  }, [openAI]);
 
   return (
     <View style={defaultStyles.pageContainer}>
